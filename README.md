@@ -31,7 +31,7 @@ for m in model:
         nn.init.normal(m.weight, 0, sqrt(1. / n))
 ```
 
-For `BatchNorm` we do the following:
+For `BatchNorm` we initialize the weights to 1 and the biases to 0.
 
 ```python
 for m in model:
@@ -47,12 +47,22 @@ for m in model:
 * Orthogonal Regularization: apply a weight penalty of `|W*W.T - I|` to loss function.
 * Max Norm Constraint: clamp weight norm to less than a constant `W.norm(2) < c`.
 
+#### L2 Regularization
+
+[...]
+
+#### L1 Regularization
+
+[...]
+
+#### Orthogonal Regularization
+
+[...]
+
 #### Max Norm Constraint
 
-So, pick a c, if a hidden unit's weight vector's length L ever gets bigger than c, multiply the weight vector by c/L. Enforce it immediately after each weight vector update. When I implemented it, I just added a weight rescaling step after every X gradient updates (where X is a hyperparameter)
+If a hidden unit's weight vector's L2 norm `L` ever gets bigger than a certain max value `c`, multiply the weight vector by `c/L`. Enforce it immediately after each weight vector update or after every `X` gradient update.
 
-- https://www.reddit.com/r/MachineLearning/comments/2bopxs/question_about_the_maxnorm_constraint_used_with/
-- https://stackoverflow.com/questions/45970888/what-does-kernel-constraint-max-norm3-do
 - https://plus.google.com/+IanGoodfellow/posts/QUaCJfvDpni
 
 ```python
@@ -66,7 +76,7 @@ l1_loss = Variable(torch.FloatTensor(1), requires_grad=True)
 for W in model.parameters():
     l1_loss = l1_loss + W.norm(1)
 
-# orthogonal reg
+# orthogonal reg (might be incorrect)
 orth_loss = Variable(torch.FloatTensor(1), requires_grad=True)
 for W in model.parameters():
     W_reshaped = W.view(W.shape[0], -1)
