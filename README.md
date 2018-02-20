@@ -1,3 +1,5 @@
+`[...] = in progress`
+
 ## Weight Initialization
 
 * [Xavier initialization](http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf) (general-purpose activation)
@@ -5,12 +7,24 @@
 * [Orthogonal initialization](https://arxiv.org/pdf/1312.6120v3.pdf)
 * [SELU initialization](https://arxiv.org/pdf/1706.02515.pdf) (SELU activation)
 
+#### Xavier Initialization
+
+[...]
+
+#### He et. al Initialization
+
+[...]
+
 #### Orthogonal Initialization
 
 - [Blog Post](https://hjweide.github.io/orthogonal-initialization-in-convolutional-layers)
 - [Smerity Blog Post](https://smerity.com/articles/2016/orthogonal_init.html)
 - [Google+ Discussion](https://plus.google.com/+SoumithChintala/posts/RZfdrRQWL6u)
 - [Reddit Discussion](https://www.reddit.com/r/MachineLearning/comments/2qsje7/how_do_you_initialize_your_neural_network_weights/)
+
+#### SELU initialization
+
+[...]
 
 ```python
 # Xavier init
@@ -99,3 +113,29 @@ def max_norm(model, max_val=3, eps=1e-8):
             desired = torch.clamp(norm, 0, max_val)
             param = param * (desired / (eps + norm))
 ```
+
+## Batch Normalization
+
+[...]
+
+## Optimization Misc.
+
+[...]
+
+- Learning Rate
+- Batch Size
+- Effect on Generalization
+
+References
+
+- [Cyclical Learning Rates for Training Neural Networks](https://arxiv.org/abs/1506.01186)
+- [SGDR: Stochastic Gradient Descent with Warm Restarts](https://arxiv.org/abs/1608.03983)
+- [On Large-Batch Training for Deep Learning: Generalization Gap and Sharp Minima](https://arxiv.org/abs/1609.04836)
+- [Don't Decay the Learning Rate, Increase the Batch Size](https://arxiv.org/abs/1711.00489)
+- https://www.reddit.com/r/MachineLearning/comments/77dn96/r_171006451_understanding_generalization_and/dol2u23/
+
+## Correct Validation Strategies
+
+[...]
+
+- https://www.reddit.com/r/MachineLearning/comments/78789r/d_is_my_validation_method_good/
