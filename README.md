@@ -70,19 +70,21 @@ for m in model:
 
 #### L2 Regularization
 
-[...]
+Heavily penalizes peaky weight vectors and encourages diffuse weight vectors. Has the appealing property of encouraging the network to use all of its inputs a little rather that some of its inputs a lot.
 
 #### L1 Regularization
 
-[...]
+Encourages sparsity, meaning we encourage the network to select the most useful inputs/features rather than use all.
 
 #### Orthogonal Regularization
 
-[...]
+Improves gradient flow by keeping the matrix norm close to 1. This is because orthogonal matrices represent an isometry of R^n, i.e. they preserve lengths and angles. They rotate vectors, but cannot scale or shear them.
 
 #### Max Norm Constraint
 
 If a hidden unit's weight vector's L2 norm `L` ever gets bigger than a certain max value `c`, multiply the weight vector by `c/L`. Enforce it immediately after each weight vector update or after every `X` gradient update.
+
+This constraint is another form of regularization. While L2 penalizes high weights using the loss function, "max norm" acts directly on the weights. L2 exerts a constant pressure to move the weights near zero which could throw a"way useful information when the loss function doesn't provide incentive for the weights to remain far from zero. On the other hand, "max norm" never drives the weights to near zero. As long as the norm is less than the constraint value, the constraint has no effect.
 
 - [Google+ Discussion](https://plus.google.com/+IanGoodfellow/posts/QUaCJfvDpni)
 
@@ -97,7 +99,7 @@ l1_loss = Variable(torch.FloatTensor(1), requires_grad=True)
 for W in model.parameters():
     l1_loss = l1_loss + W.norm(1)
 
-# orthogonal reg (might be incorrect)
+# orthogonal reg
 orth_loss = Variable(torch.FloatTensor(1), requires_grad=True)
 for W in model.parameters():
     W_reshaped = W.view(W.shape[0], -1)
@@ -109,7 +111,8 @@ for W in model.parameters():
 def max_norm(model, max_val=3, eps=1e-8):
     for name, param in model.named_parameters():
         if 'bias' not in name:
-            norm = param.norm(2, dim=0, keepdim=True) ** 2
+            # l2 norm per row (batch)
+            norm = param.norm(2, dim=0, keepdim=True)
             desired = torch.clamp(norm, 0, max_val)
             param = param * (desired / (eps + norm))
 ```
