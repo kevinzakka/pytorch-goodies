@@ -1,9 +1,16 @@
 ## Weight Initialization
 
-* Xavier initialization (general-purpose)
-* He et. al initialization (ReLU activation)
-* orthogonal initialization
-* Normal(0, 1/N) (SELU activation)
+* [Xavier initialization](http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf) (general-purpose activation)
+* [He et. al initialization](https://www.google.com.lb/search?q=kaiming+he+init&oq=kaiming+he+init&aqs=chrome..69i57j0l5.3422j0j4&sourceid=chrome&ie=UTF-8) (ReLU activation)
+* [Orthogonal initialization](https://arxiv.org/pdf/1312.6120v3.pdf)
+* [SELU initialization](https://arxiv.org/pdf/1706.02515.pdf) (SELU activation)
+
+#### Orthogonal Initialization
+
+- [Blog Post](https://hjweide.github.io/orthogonal-initialization-in-convolutional-layers)
+- [Smerity Blog Post](https://smerity.com/articles/2016/orthogonal_init.html)
+- [Google+ Discussion](https://plus.google.com/+SoumithChintala/posts/RZfdrRQWL6u)
+- [Reddit Discussion](https://www.reddit.com/r/MachineLearning/comments/2qsje7/how_do_you_initialize_your_neural_network_weights/)
 
 ```python
 # Xavier init
@@ -63,7 +70,7 @@ for m in model:
 
 If a hidden unit's weight vector's L2 norm `L` ever gets bigger than a certain max value `c`, multiply the weight vector by `c/L`. Enforce it immediately after each weight vector update or after every `X` gradient update.
 
-- https://plus.google.com/+IanGoodfellow/posts/QUaCJfvDpni
+- [Google+ Discussion](https://plus.google.com/+IanGoodfellow/posts/QUaCJfvDpni)
 
 ```python
 # l2 reg
