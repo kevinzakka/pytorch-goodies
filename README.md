@@ -11,7 +11,7 @@ With this implementation, the variance of the layer outputs is equal to `Var(W) 
 
 Note that PyTorch provides convenience functions for some of the initializations. The input and output shapes are computed using the method `_calculate_fan_in_and_fan_out()` and a `gain()` method scales the standard deviation to suit a particular activation.
 
-#### Xavier Initialization
+### Xavier Initialization
 
 This initialization is general-purpose and meant to "work" pretty well for any activation in practice.
 
@@ -33,7 +33,7 @@ for m in model.modules():
 
 - [arXiv](http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf)
 
-#### He et. al Initialization
+### He et. al Initialization
 
 This is a similarly derived initialization tailored specifically for ReLU activations since they do not exhibit zero mean.
 
@@ -48,7 +48,7 @@ For `mode=fan_in`, the variance of the distribution is ensured in the forward pa
 
 - [arXiv](https://arxiv.org/abs/1502.01852)
 
-#### SELU Initialization
+### SELU Initialization
 
 Again, this initialization is specifically derived for the SELU activation function. The authors use the `fan_in` strategy. They mention that there is no significant difference between sampling from a Gaussian, a truncated Gaussian or a Uniform distribution.
 
@@ -65,7 +65,7 @@ for m in model.modules():
 
 - [arXiv](https://arxiv.org/abs/1706.02515)
 
-#### Orthogonal Initialization
+### Orthogonal Initialization
 
 Orthogonality is a desirable quality in NN weights in part because it is norm preserving, i.e. it rotates the input matrix, but cannot change its norm (scale/shear). This property is valuable in deep or recurrent networks, where repeated matrix multiplication can result in signals vanishing or exploding.
 
@@ -81,7 +81,7 @@ for m in model.modules():
 - [Google+ Discussion](https://plus.google.com/+SoumithChintala/posts/RZfdrRQWL6u)
 - [Reddit Discussion](https://www.reddit.com/r/MachineLearning/comments/2qsje7/how_do_you_initialize_your_neural_network_weights/)
 
-#### Batch Norm Initialization
+### Batch Norm Initialization
 
 ```python
 for m in model:
@@ -92,7 +92,7 @@ for m in model:
 
 ## Weight Regularization
 
-#### L2 Regularization
+### L2 Regularization
 
 Heavily penalizes peaky weight vectors and encourages diffuse weight vectors. Has the appealing property of encouraging the network to use all of its inputs a little rather that some of its inputs a lot.
 
@@ -104,7 +104,7 @@ for name, param in model.named_parameters():
         l2_loss = l2_loss + (0.5 * reg * torch.sum(torch.pow(W, 2)))
 ```
 
-#### L1 Regularization
+### L1 Regularization
 
 Encourages sparsity, meaning we encourage the network to select the most useful inputs/features rather than use all.
 
@@ -116,7 +116,7 @@ for name, param in model.named_parameters():
         l1_loss = l1_loss + (reg * torch.sum(torch.abs(W)))
 ```
 
-#### Orthogonal Regularization
+### Orthogonal Regularization
 
 Improves gradient flow by keeping the matrix norm close to unitary.
 
@@ -133,7 +133,7 @@ for name, param in model.named_parameters():
 
 - [arXiv](https://arxiv.org/abs/1609.07093)
 
-#### Max Norm Constraint
+### Max Norm Constraint
 
 If a hidden unit's weight vector's L2 norm `L` ever gets bigger than a certain max value `c`, multiply the weight vector by `c/L`. Enforce it immediately after each weight vector update or after every `X` gradient update.
 
