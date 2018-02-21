@@ -7,17 +7,21 @@ PyTorch layers are initialized by default in their respective `reset_parameters(
 - `nn.Conv2D`
     - `weight` and `bias`: uniform distribution [-limit, +limit] where `limit` is `1. / sqrt(fan_in)` and `fan_in` is the number of input units in the weight tensor.
 
-**Note:** we usually initialize the biases to be zero since the asymmetry breaking is done by the weights ([source](http://cs231n.github.io/neural-networks-2/#init)).
+With this implementation, the variance of the layer outputs is equal to `Var(W) = 1 / 3 * sqrt(fan_in)` which isn't the best initialization strategy out there.
+
+Note that PyTorch provides convenience functions for some of the initializations. The input and output shapes are computed using the method `_calculate_fan_in_and_fan_out()` and a `gain()` method scales the standard deviation to suit a particular activation.
 
 #### Xavier Initialization
 
-The above default initialization is not the best initialization strategy for symmetry breaking. Ideally, we want the variance of the outputs and the gradients to be the same in each layer. 
+The problem with random weight initialization is that the distribution of the outputs in a layer has a variance that grows linearly with the number of inputs. Ideally, we want to initialize the weights in a way that ensures good forward and backward data flow through the network. That is, we don't want the activations to be consistently shrinking or increasing as we progress through the different layers.
 
-To achieve this, we need an initialization from a uniform distribution with `Var(W) = 2 / (fan_in, fan_out)`. Some people choose to sample from a normal distribution, check [this discussion](https://github.com/keras-team/keras/issues/52) for empirical evidence that a uniform distribution gives better results.
+To achieve this, we need to initialize the weight vector `W` of a layer from a uniform distribution with `Var(W) = 2 / (fan_in + fan_out)` (add explanation later). Some people choose to sample from a normal distribution, check [this discussion](https://github.com/keras-team/keras/issues/52) for empirical evidence that a uniform distribution gives better results.
 
-Using the formula for the variance of a uniform distirbution, we derive that the weights should be initialized from a uniform distribution [-limit, +limit] where `limit` is `sqrt(6 / (fan_in + fan_out))`.
+Using the formula for the variance of a uniform distribution, we derive that the weights should be initialized from a uniform distribution [-limit, +limit] where `limit` is `sqrt(6) / sqrt(fan_in + fan_out)`.
 
-**Note:** the above derivation assumed zero-mean inputs and weights. This is not generally the case and may vary with the activation function used. Thus, this initialization is a general-purpose one meant to "work" pretty well in practice. Other initializations can be tailored to particular activations.
+Note that the above derivation assumed zero-mean inputs and weights. This is not generally the case and may vary with the activation function used. Thus, this initialization is a general-purpose one meant to "work" pretty well in practice. Other initializations can be tailored to particular activations.
+
+It is also important to mention that we usually don't do some fancy initialization for the biases, but rather set them all to be zero ([source](http://cs231n.github.io/neural-networks-2/#init)).
 
 ```python
 # xavier init
@@ -43,7 +47,7 @@ for m in model.modules():
 
 #### SELU Initialization
 
-Again, this initialization is specifically derived for the SELU activation function. The authors use the `fan_in` strategy.
+Again, this initialization is specifically derived for the SELU activation function. The authors use the `fan_in` strategy. They mention that there is no significant difference between sampling from a Gaussian, a truncated Gaussian or a Uniform distribution.
 
 ```python
 # selu init
