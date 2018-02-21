@@ -13,21 +13,22 @@ Note that PyTorch provides convenience functions for some of the initializations
 
 #### Xavier Initialization
 
-The problem with random weight initialization is that the distribution of the outputs in a layer has a variance that grows linearly with the number of inputs. Ideally, we want to initialize the weights in a way that ensures good forward and backward data flow through the network. That is, we don't want the activations to be consistently shrinking or increasing as we progress through the different layers.
-
-To achieve this, we need to initialize the weight vector `W` of a layer from a uniform distribution with `Var(W) = 2 / (fan_in + fan_out)` (add explanation later). Some people choose to sample from a normal distribution, check [this discussion](https://github.com/keras-team/keras/issues/52) for empirical evidence that a uniform distribution gives better results.
-
-Using the formula for the variance of a uniform distribution, we derive that the weights should be initialized from a uniform distribution [-limit, +limit] where `limit` is `sqrt(6) / sqrt(fan_in + fan_out)`.
-
-Note that the above derivation assumed zero-mean inputs and weights. This is not generally the case and may vary with the activation function used. Thus, this initialization is a general-purpose one meant to "work" pretty well in practice. Other initializations can be tailored to particular activations.
-
-It is also important to mention that we usually don't do some fancy initialization for the biases, but rather set them all to be zero ([source](http://cs231n.github.io/neural-networks-2/#init)).
+This initialization is general-purpose and meant to "work" pretty well for any activation in practice.
 
 ```python
-# xavier init
+# default xavier init
 for m in model.modules():
     if isinstance(m, (nn.Conv2d, nn.Linear)):
         nn.init.xavier_uniform(m.weight)
+```
+
+You can tailor this initialization to your specific activation by using the `nn.init.calculate_gain(act)` argument.
+
+```python
+# default xavier init
+for m in model.modules():
+    if isinstance(m, (nn.Conv2d, nn.Linear)):
+        nn.init.xavier_uniform(m.weight(), gain=nn.init.calculate_gain('relu'))
 ```
 
 - [arXiv](http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf)
@@ -42,6 +43,8 @@ for m in model.modules():
     if isinstance(m, (nn.Conv2d, nn.Linear)):
         nn.init.kaiming_normal(m.weight, mode='fan_in')
 ```
+
+For `mode=fan_in`, the variance of the distribution is ensured in the forward pass, while for `mode=fan_out`, it is ensured in the backwards pass.
 
 - [arXiv](https://arxiv.org/abs/1502.01852)
 
