@@ -1,3 +1,15 @@
+## Model Statistics
+
+### Number of Parameters
+
+```python
+num_params = sum([p.data.nelement() for p in model.parameters()])
+```
+
+### Number of FLOPS
+
+[...]
+
 ## Weight Initialization
 
 PyTorch layers are initialized by default in their respective `reset_parameters()` method. For example:
