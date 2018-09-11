@@ -188,3 +188,8 @@ def max_norm(model, max_val=3, eps=1e-8):
 [...]
 
 - [Reddit Discussion](https://www.reddit.com/r/MachineLearning/comments/78789r/d_is_my_validation_method_good/)
+
+
+## References
+
+- Thanks to [Zijun Deng](https://github.com/zijundeng/pytorch-semantic-segmentation) for inspiring the code for the segmentation metrics.
