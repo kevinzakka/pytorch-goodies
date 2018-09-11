@@ -1,3 +1,4 @@
+.pytest_cache/
 *.ipynb
 .DS_Store
 
