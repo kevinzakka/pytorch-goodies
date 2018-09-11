@@ -3,7 +3,7 @@
 ### Number of Parameters
 
 ```python
-num_params = sum([p.data.nelement() for p in model.parameters()])
+num_params = sum(param.numel() for param in model.parameters())
 ```
 
 ### Number of FLOPS
