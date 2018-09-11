@@ -8,7 +8,7 @@ import torch.nn.functional as F
 
 
 def bce_loss(true, logits, pos_weight):
-    """Compute the weighted binary cross-entropy loss.
+    """Computes the weighted binary cross-entropy loss.
 
     Args:
         true: a tensor of shape [B, H, W] or [B, 1, H, W].
@@ -28,7 +28,7 @@ def bce_loss(true, logits, pos_weight):
 
 
 def ce_loss(true, logits, weights, ignore=255):
-    """Compute the weighted multi-class cross-entropy loss.
+    """Computes the weighted multi-class cross-entropy loss.
 
     Args:
         true: a tensor of shape [B, H, W] or [B, 1, H, W].
@@ -48,13 +48,16 @@ def ce_loss(true, logits, weights, ignore=255):
     return ce_loss
 
 
-def dice_loss(true, logits, log=False):
-    """Compute the binary dice loss.
+def dice_loss(true, logits, log=False, force_positive=False):
+    """Computes the binary dice loss.
 
     Args:
         true: a tensor of shape [B, H, W] or [B, 1, H, W].
         logits: a tensor of shape [B, C, H, W]. Corresponds to
             the raw output or logits of the model.
+        log: whether to return the loss in log space.
+        force_positive: whether to add 1 to the loss to prevent
+            it from becoming negative.
 
     Returns:
         dice_loss: the binary dice loss.
@@ -65,10 +68,11 @@ def dice_loss(true, logits, log=False):
     intersection = (dice_output * dice_target).sum()
     union = dice_output.sum() + dice_target.sum() + eps
     dice_loss = 2 * intersection / union
+    if force_positive:
+        return (1 - dice_loss)
     if log:
         dice_loss = torch.log(dice_loss)
-        return (-1 * dice_loss)
-    return (1 - dice_loss)
+    return (-1 * dice_loss)
 
 
 def jaccard_loss(true, pred):

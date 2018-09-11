@@ -19,7 +19,7 @@ def _fast_hist(true, pred, num_classes):
 
 
 def overall_pixel_accuracy(hist):
-    """Compute the total pixel accuracy.
+    """Computes the total pixel accuracy.
 
     The overall pixel accuracy provides an intuitive
     approximation for the qualitative perception of the
@@ -39,7 +39,7 @@ def overall_pixel_accuracy(hist):
 
 
 def per_class_pixel_accuracy(hist):
-    """Compute the average per-class pixel accuracy.
+    """Computes the average per-class pixel accuracy.
 
     The per-class pixel accuracy is a more fine-grained
     version of the overall pixel accuracy. A model could
@@ -63,7 +63,7 @@ def per_class_pixel_accuracy(hist):
 
 
 def jaccard_index(hist):
-    """Compute the Jaccard index, a.k.a the Intersection over Union (IoU).
+    """Computes the Jaccard index, a.k.a the Intersection over Union (IoU).
 
     Args:
         hist: confusion matrix.
@@ -80,7 +80,7 @@ def jaccard_index(hist):
 
 
 def dice_coefficient(hist):
-    """Compute the Sørensen–Dice coefficient, a.k.a the F1 score.
+    """Computes the Sørensen–Dice coefficient, a.k.a the F1 score.
 
     Args:
         hist: confusion matrix.
@@ -97,7 +97,7 @@ def dice_coefficient(hist):
 
 
 def eval_metrics(true, pred, num_classes):
-    """Compute various segmentation metrics on 2D feature maps.
+    """Computes various segmentation metrics on 2D feature maps.
 
     Args:
         true: a tensor of shape [B, H, W] or [B, 1, H, W].
