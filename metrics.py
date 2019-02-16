@@ -1,10 +1,10 @@
-"""
-Useful definitions of common ml metrics.
+"""Common image segmentation metrics.
 """
 
 import torch
 
 from utils import nanmean
+
 
 EPS = 1e-10
 

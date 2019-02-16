@@ -1,13 +1,12 @@
-"""
-Useful definitions of common image segmentation losses.
+"""Common image segmentation losses.
 """
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+
+from torch.nn import functional as F
 
 
-def bce_loss(true, logits, pos_weight):
+def bce_loss(true, logits, pos_weight=None):
     """Computes the weighted binary cross-entropy loss.
 
     Args:
@@ -21,10 +20,10 @@ def bce_loss(true, logits, pos_weight):
     Returns:
         bce_loss: the weighted binary cross-entropy loss.
     """
-    true_ = true.float()
-    logits_ = logits.float()
     bce_loss = F.binary_cross_entropy_with_logits(
-        logits_, true_, pos_weight=pos_weight,
+        logits.float(),
+        true.float(),
+        pos_weight=pos_weight,
     )
     return bce_loss
 
@@ -43,11 +42,11 @@ def ce_loss(true, logits, weights, ignore=255):
     Returns:
         ce_loss: the weighted multi-class cross-entropy loss.
     """
-    true_ = true.long()
-    logits_ = logits.float()
     ce_loss = F.cross_entropy(
-        logits_, true,
-        ignore_index=ignore, weight=weights
+        logits.float(),
+        true.long(),
+        ignore_index=ignore,
+        weight=weights,
     )
     return ce_loss
 
@@ -81,7 +80,8 @@ def dice_loss(true, logits, eps=1e-7):
     else:
         true_1_hot = torch.eye(num_classes)[true.squeeze(1)]
         true_1_hot = true_1_hot.permute(0, 3, 1, 2).float()
-        probas = F.softmax(probas, dim=1)
+        probas = F.softmax(logits, dim=1)
+    true_1_hot = true_1_hot.type(logits.type())
     dims = (0,) + tuple(range(2, true.ndimension()))
     intersection = torch.sum(probas * true_1_hot, dims)
     cardinality = torch.sum(probas + true_1_hot, dims)
@@ -119,6 +119,7 @@ def jaccard_loss(true, logits, eps=1e-7):
         true_1_hot = torch.eye(num_classes)[true.squeeze(1)]
         true_1_hot = true_1_hot.permute(0, 3, 1, 2).float()
         probas = F.softmax(probas, dim=1)
+    true_1_hot = true_1_hot.type(logits.type())
     dims = (0,) + tuple(range(2, true.ndimension()))
     intersection = torch.sum(probas * true_1_hot, dims)
     cardinality = torch.sum(probas + true_1_hot, dims)
@@ -163,12 +164,13 @@ def tversky_loss(true, logits, alpha, beta, eps=1e-7):
         true_1_hot = torch.eye(num_classes)[true.squeeze(1)]
         true_1_hot = true_1_hot.permute(0, 3, 1, 2).float()
         probas = F.softmax(probas, dim=1)
+    true_1_hot = true_1_hot.type(logits.type())
     dims = (0,) + tuple(range(2, true.ndimension()))
     intersection = torch.sum(probas * true_1_hot, dims)
     fps = torch.sum(probas * (1 - true_1_hot), dims)
     fns = torch.sum((1 - probas) * true_1_hot, dims)
     num = intersection
-    denom = intersection + alpha*fps + beta*fns
+    denom = intersection + (alpha * fps) + (beta * fns)
     tversky_loss = (num / (denom + eps)).mean()
     return (1 - tversky_loss)
 
