@@ -3,7 +3,8 @@
 ### Number of Parameters
 
 ```python
-num_params = sum(param.numel() for param in model.parameters())
+num_params = sum(p.numel() for p in model.parameters()) # Total parameters
+num_trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)  # Trainable parameters
 ```
 
 ### Number of FLOPS
