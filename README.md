@@ -40,7 +40,7 @@ You can tailor this initialization to your specific activation by using the `nn.
 # default xavier init
 for m in model.modules():
     if isinstance(m, (nn.Conv2d, nn.Linear)):
-        nn.init.xavier_uniform(m.weight(), gain=nn.init.calculate_gain('relu'))
+        nn.init.xavier_uniform(m.weight, gain=nn.init.calculate_gain('relu'))
 ```
 
 - [arXiv](http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf)
