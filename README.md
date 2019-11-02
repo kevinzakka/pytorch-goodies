@@ -141,7 +141,7 @@ for name, param in model.named_parameters():
         param_flat = param.view(param.shape[0], -1)
         sym = torch.mm(param_flat, torch.t(param_flat))
         sym -= Variable(torch.eye(param_flat.shape[0]))
-        orth_loss = orth_loss + (reg * sym.sum())
+        orth_loss = orth_loss + (reg * sym.abs().sum())
 ```
 
 - [arXiv](https://arxiv.org/abs/1609.07093)
