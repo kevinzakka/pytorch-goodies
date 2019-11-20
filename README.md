@@ -110,11 +110,12 @@ for m in model:
 Heavily penalizes peaky weight vectors and encourages diffuse weight vectors. Has the appealing property of encouraging the network to use all of its inputs a little rather that some of its inputs a lot.
 
 ```python
-reg = 1e-6
-l2_loss = Variable(torch.FloatTensor(1), requires_grad=True)
-for name, param in model.named_parameters():
-    if 'bias' not in name:
-        l2_loss = l2_loss + (0.5 * reg * torch.sum(torch.pow(W, 2)))
+with torch.enable_grad():
+    reg = 1e-6
+    l2_loss = torch.zeros(1)
+    for name, param in model.named_parameters():
+        if 'bias' not in name:
+            l2_loss = l2_loss + (0.5 * reg * torch.sum(torch.pow(W, 2)))
 ```
 
 ### L1 Regularization
@@ -122,11 +123,12 @@ for name, param in model.named_parameters():
 Encourages sparsity, meaning we encourage the network to select the most useful inputs/features rather than use all.
 
 ```python
-reg = 1e-6
-l1_loss = Variable(torch.FloatTensor(1), requires_grad=True)
-for name, param in model.named_parameters():
-    if 'bias' not in name:
-        l1_loss = l1_loss + (reg * torch.sum(torch.abs(W)))
+with torch.enable_grad():
+    reg = 1e-6
+    l1_loss = torch.zeros(1)
+    for name, param in model.named_parameters():
+        if 'bias' not in name:
+            l1_loss = l1_loss + (reg * torch.sum(torch.abs(W)))
 ```
 
 ### Orthogonal Regularization
@@ -134,14 +136,15 @@ for name, param in model.named_parameters():
 Improves gradient flow by keeping the matrix norm close to unitary.
 
 ```python
-reg = 1e-6
-orth_loss = Variable(torch.FloatTensor(1), requires_grad=True)
-for name, param in model.named_parameters():
-    if 'bias' not in name:
-        param_flat = param.view(param.shape[0], -1)
-        sym = torch.mm(param_flat, torch.t(param_flat))
-        sym -= Variable(torch.eye(param_flat.shape[0]))
-        orth_loss = orth_loss + (reg * sym.abs().sum())
+with torch.enable_grad():
+    reg = 1e-6
+    orth_loss = torch.zeros(1)
+    for name, param in model.named_parameters():
+        if 'bias' not in name:
+            param_flat = param.view(param.shape[0], -1)
+            sym = torch.mm(param_flat, torch.t(param_flat))
+            sym -= torch.eye(param_flat.shape[0])
+            orth_loss = orth_loss + (reg * sym.abs().sum())
 ```
 
 - [arXiv](https://arxiv.org/abs/1609.07093)
