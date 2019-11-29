@@ -161,7 +161,7 @@ def tversky_loss(true, logits, alpha, beta, eps=1e-7):
         neg_prob = 1 - pos_prob
         probas = torch.cat([pos_prob, neg_prob], dim=1)
     else:
-        true_1_hot = torch.eye(num_classes)[true.squeeze(1).to(torch.int64)]
+        true_1_hot = torch.eye(num_classes)[true.squeeze(1)]
         true_1_hot = true_1_hot.permute(0, 3, 1, 2).float()
         probas = F.softmax(logits, dim=1)
     true_1_hot = true_1_hot.type(logits.type())
