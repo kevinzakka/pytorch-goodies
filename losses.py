@@ -89,12 +89,12 @@ def dice_loss(true, logits, eps=1e-7):
     return (1 - dice_loss)
 
 
-def jaccard_loss(true, logits, eps=1e-7):
+def jaccard_loss(true, logits, eps=1e-7, negative_log=False):
     """Computes the Jaccard loss, a.k.a the IoU loss.
 
     Note that PyTorch optimizers minimize a loss. In this
     case, we would like to maximize the jaccard loss so we
-    return the negated jaccard loss.
+    return the negated jaccard loss(default) or negative log of jaccard score(negative_log=True)
 
     Args:
         true: a tensor of shape [B, H, W] or [B, 1, H, W].
@@ -120,11 +120,15 @@ def jaccard_loss(true, logits, eps=1e-7):
         true_1_hot = true_1_hot.permute(0, 3, 1, 2).float()
         probas = F.softmax(logits, dim=1)
     true_1_hot = true_1_hot.type(logits.type())
+    
+    # Ignore class dim(dim=1) when calculating intersection and union
     dims = (0,) + tuple(range(2, true.ndimension()))
     intersection = torch.sum(probas * true_1_hot, dims)
     cardinality = torch.sum(probas + true_1_hot, dims)
     union = cardinality - intersection
     jacc_loss = (intersection / (union + eps)).mean()
+    if negative_log:
+        return -1 * jacc_loss.log() 
     return (1 - jacc_loss)
 
 
